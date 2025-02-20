@@ -1,4 +1,11 @@
 package com.ninos.services;
 
-public class NotificationService {
+import com.ninos.dtos.NotificationDTO;
+
+public interface NotificationService {
+
+    void sendEmail(NotificationDTO notificationDTO);
+    void sendSms();
+    void sendWhatsApp();
+
 }
