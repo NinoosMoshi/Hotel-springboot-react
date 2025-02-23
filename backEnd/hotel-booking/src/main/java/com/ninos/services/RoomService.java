@@ -2,11 +2,8 @@ package com.ninos.services;
 
 import com.ninos.dtos.Response;
 import com.ninos.dtos.RoomDTO;
-import com.ninos.entities.Room;
 import com.ninos.enums.RoomType;
 import org.springframework.web.multipart.MultipartFile;
-import org.w3c.dom.stylesheets.LinkStyle;
-
 import java.time.LocalDate;
 import java.util.List;
 
