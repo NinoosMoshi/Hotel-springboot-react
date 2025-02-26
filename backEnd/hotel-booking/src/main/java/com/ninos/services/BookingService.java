@@ -6,8 +6,9 @@ import com.ninos.entities.Booking;
 
 public interface BookingService {
 
+    Response getAllBookings();
     Response createBooking(BookingDTO bookingDTO);
-    Response findBookingByReference(String bookingReference);
+    Response findBookingByReferenceNo(String bookingReference);
     Response updateBooking(BookingDTO bookingDTO);
 
 }

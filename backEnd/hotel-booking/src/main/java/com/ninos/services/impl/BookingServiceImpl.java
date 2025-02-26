@@ -3,6 +3,7 @@ package com.ninos.services.impl;
 import com.ninos.dtos.BookingDTO;
 import com.ninos.dtos.NotificationDTO;
 import com.ninos.dtos.Response;
+import com.ninos.dtos.RoomDTO;
 import com.ninos.entities.Booking;
 import com.ninos.entities.Room;
 import com.ninos.entities.User;
@@ -19,12 +20,15 @@ import com.ninos.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,6 +42,21 @@ public class BookingServiceImpl implements BookingService {
     private final ModelMapper modelMapper;
     private final BookingCodeGenerator bookingCodeGenerator;
 
+
+    @Override
+    public Response getAllBookings() {
+        List<Booking> bookingList = bookingRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        List<BookingDTO> bookingDTOList = modelMapper.map(bookingList, new TypeToken<List<BookingDTO>>() {}.getType());
+        for(BookingDTO bookingDTO : bookingDTOList) {
+            bookingDTO.setUser(null);
+            bookingDTO.setRoom(null);
+        }
+        return Response.builder()
+                .status(200)
+                .message("Successfully Getting All Bookings")
+                .bookings(bookingDTOList)
+                .build();
+    }
 
     @Override
     public Response createBooking(BookingDTO bookingDTO) {
@@ -105,14 +124,45 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Response findBookingByReference(String bookingReference) {
-        return null;
+    public Response findBookingByReferenceNo(String bookingReference) {
+        Booking booking = bookingRepository.findByBookingReference(bookingReference)
+                .orElseThrow(() -> new NotFoundException("Booking with reference No: " + bookingReference + " not found"));
+
+        BookingDTO bookingDTO = modelMapper.map(booking, BookingDTO.class);
+
+        return Response.builder()
+                .status(200)
+                .message("Successfully Find Booking By Reference")
+                .booking(bookingDTO)
+                .build();
     }
 
     @Override
     public Response updateBooking(BookingDTO bookingDTO) {
-        return null;
+        if(bookingDTO.getId() == null) throw new NotFoundException("Booking Id cannot be null");
+
+        Booking existingBooking = bookingRepository.findById(bookingDTO.getId())
+                .orElseThrow(() -> new NotFoundException("Booking not found"));
+
+        if(bookingDTO.getBookingStatus() != null){
+            existingBooking.setBookingStatus(bookingDTO.getBookingStatus());
+        }
+
+        if(bookingDTO.getPaymentStatus() != null){
+            existingBooking.setPaymentStatus(bookingDTO.getPaymentStatus());
+        }
+
+        bookingRepository.save(existingBooking);
+
+        return Response.builder()
+                .status(200)
+                .message("Successfully Updated Booking")
+                .booking(bookingDTO)
+                .build();
+
     }
+
+
 
 
     private BigDecimal calculateTotalPrice(Room room, BookingDTO bookingDTO) {
