@@ -23,12 +23,14 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.TemplateEngine;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import org.thymeleaf.context.Context;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,6 +43,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final BookingCodeGenerator bookingCodeGenerator;
+    private final TemplateEngine templateEngine;
 
 
     @Override
@@ -105,15 +108,36 @@ public class BookingServiceImpl implements BookingService {
         log.info("Payment URL: {}", paymentUrl);
 
         // send notification via email
+//        NotificationDTO notificationDTO = NotificationDTO.builder()
+//                .recipient(currentUser.getEmail())
+//                .subject("Booking Confirmation")
+//                .body(String.format("Your booking has been created successfully. Please proceed with your payment using the payment link below " +
+//                        "\n%s", paymentUrl))
+//                .bookingReference(bookingReference)
+//                .build();
+//
+//        notificationService.sendEmail(notificationDTO); // sending email
+
+        // Prepare Thymeleaf variables
+        Context context = new Context();
+        context.setVariable("username", currentUser.getFirstName());
+        context.setVariable("paymentUrl", paymentUrl);
+        context.setVariable("bookingReference", bookingReference);
+
+// Process the Thymeleaf template
+        String emailBody = templateEngine.process("email/booking-confirmation", context);
+
+// Send notification via email with Thymeleaf content
         NotificationDTO notificationDTO = NotificationDTO.builder()
                 .recipient(currentUser.getEmail())
                 .subject("Booking Confirmation")
-                .body(String.format("Your booking has been created successfully. Please proceed with your payment using the payment link below " +
-                        "\n\nn%s", paymentUrl))
+                .body(emailBody)
                 .bookingReference(bookingReference)
                 .build();
 
-        notificationService.sendEmail(notificationDTO); // sending email
+        notificationService.sendEmail(notificationDTO);
+
+
 
         return Response.builder()
                 .status(200)
