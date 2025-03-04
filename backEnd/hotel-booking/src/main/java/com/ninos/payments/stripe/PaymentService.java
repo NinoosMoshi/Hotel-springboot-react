@@ -39,6 +39,8 @@ public class PaymentService {
 
 
     public String createPaymentIntent(PaymentRequest paymentRequest) {
+        log.info("Creating payment intent for booking with reference: {}", paymentRequest.getBookingReference());
+
         Stripe.apiKey = secretKey;
         String bookingReference = paymentRequest.getBookingReference();
 
@@ -66,6 +68,8 @@ public class PaymentService {
 
 
     public void updatePaymentBooking(PaymentRequest paymentRequest) {
+        log.info("Updating payment for booking with reference: {}", paymentRequest.getBookingReference());
+
         String bookingReference = paymentRequest.getBookingReference();
 
         Booking booking = bookingRepository.findByBookingReference(bookingReference)
