@@ -76,6 +76,7 @@ export default class ApiService {
       return resp.data;
     }
 
+    //.........................................................................................................
 
     // USERS
     static async myProfile() {
@@ -100,8 +101,11 @@ export default class ApiService {
       return resp.data;
     }
 
+    //.........................................................................................................
+
 
     // ROOMS
+    // add room
     static async addRoom(formData) {
       const resp = await axios.post(`${this.BASE_URL}/rooms/add`, formData, {
         headers : {
@@ -115,6 +119,133 @@ export default class ApiService {
       return resp.data;
     }
 
+    // get room types
+    static async getRoomTypes() {
+      const resp = await axios.get(`${this.BASE_URL}/rooms/types`);
+      return resp.data;
+    }
 
+
+    // get all rooms
+    static async getAllRooms() {
+      const resp = await axios.get(`${this.BASE_URL}/rooms/all`);
+      return resp.data;
+    }
+
+    // get room details
+    static async getRoomById(roomId) {
+      const resp = await axios.get(`${this.BASE_URL}/rooms/${roomId}`);
+      return resp.data;
+    }
+
+    // delete room
+    static async deleteRoom(roomId) {
+      const resp = await axios.delete(`${this.BASE_URL}/rooms/delete/${roomId}`, {
+        headers : this.getHeader()
+      });
+      return resp.data;
+    }
+
+  
+    // update room
+    static async updateRoom(formData) {
+      const resp = await axios.put(`${this.BASE_URL}/rooms/update`,formData, {
+        headers : {
+          ...this.getHeader(),
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+      return resp.data;
+    }
+
+
+    // rooms availability
+    static async getAvailableRooms(checkInDate, checkOutDate, roomType) {
+      const resp = await axios.get(`${this.BASE_URL}/rooms/available?checkInDate=${checkInDate}&checkOutDate=${checkOutDate}&roomType=${roomType}`);
+      return resp.data;
+    }
+
+    //.........................................................................................................
+
+
+    // BOOKINGS
+    static async getBookingByReference(bookingCode) {
+      const resp = await axios.get(`${this.BASE_URL}/bookings/${bookingCode}`);
+      return resp.data;
+  }
+
+
+  static async bookRoom(bookingData) {
+    const resp = await axios.post(`${this.BASE_URL}/bookings`, bookingData, {
+      headers : this.getHeader()
+    });
+    return resp.data;
+  }
+
+
+  static async getAllBookings() {
+    const resp = await axios.post(`${this.BASE_URL}/bookings/all`, {
+      headers : this.getHeader()
+    });
+    return resp.data;
+  }
+
+
+  static async updateBooking() {
+    const resp = await axios.put(`${this.BASE_URL}/bookings/update`, {
+      headers : this.getHeader()
+    });
+  }
+
+//.........................................................................................................
+
+
+    // PAYMENTS
+
+    // create payment intent
+    static async proceedForPayment(body) {
+      const resp = await axios.post(`${this.BASE_URL}/payments/pay`, body, {
+        headers : this.getHeader()
+      });
+      return resp.data;  // return the strip transaction id for this transaction
+    }
+
+
+    // update payment when it has been paid(completed)
+    static async updateBookingPayment(body) {
+      const resp = await axios.put(`${this.BASE_URL}/payments/update`, body, {
+        headers : this.getHeader()
+      });
+      return resp.data;  
+    }
+
+
+    // AUTHENTICATION CHECKER
+
+    static logout() {
+      this.clearAuth();
+    }
+
+    static isAuthenticated() {
+      // if getToken() returns null or undefined, it means that the user is not authenticated, !!token will return false
+      // if getToken() returns a valid token, it means that the user is authenticated, !!token will return true
+      const token = this.getToken();
+      return !!token;
+    }
+
+    static isAdmin() {
+      const role = this.getRole();
+      return role === 'ADMIN';
+    }
+
+
+    /** NOTE **/
+// we using ! or !! to convert a value into a boolean
+
+// console.log(!!"hello"); // true
+// console.log(!!123);     // true
+// console.log(!!null);    // false
+// console.log(!!"");      // false
+// console.log(!!undefined); // false
 
 }

@@ -100,6 +100,7 @@ public class RoomController {
         return ResponseEntity.ok(roomService.getAllRoomTypes());
     }
 
+
     @GetMapping("/search")
     public ResponseEntity<Response> searchRoom(@RequestParam String input) {
         return ResponseEntity.ok(roomService.searchRoom(input));
