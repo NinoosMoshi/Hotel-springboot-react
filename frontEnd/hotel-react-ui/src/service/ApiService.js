@@ -238,6 +238,11 @@ export default class ApiService {
       return role === 'ADMIN';
     }
 
+    static isCustomer() {
+      const role = this.getRole();
+      return role === 'CUSTOMER';
+    }
+
 
     /** NOTE **/
 // we using ! or !! to convert a value into a boolean
