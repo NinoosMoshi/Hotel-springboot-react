@@ -47,7 +47,6 @@ export default function Register() {
 
   return (
     <div className='auth-container'>
-      {/* {message.text && (<p className={`${message.type}`}>{message.text}</p>)} */}
       {message.text && (<p className={`${message.type}-message`}>{message.text}</p>)}
 
       <h2>Register</h2>

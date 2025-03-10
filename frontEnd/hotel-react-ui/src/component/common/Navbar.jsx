@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
-import ApiService  from '../../service/ApiService';
+import ApiService from '../../service/ApiService';
 
 
 export default function Navbar() {
@@ -9,12 +9,12 @@ export default function Navbar() {
   const isCustomer = ApiService.isCustomer();
   const isAdmin = ApiService.isAdmin();
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const handleLogout = () => {
-      ApiService.logout();
-      navigate('/login');
-    }
+  const handleLogout = () => {
+    ApiService.logout();
+    navigate('/login');
+  }
 
   return (
     <nav className='navbar'>
@@ -27,13 +27,14 @@ export default function Navbar() {
         <li><NavLink to={"/rooms"} activeClassName="active">Room</NavLink></li>
         <li><NavLink to={"/find-booking"} activeClassName="active">Find My Bookings</NavLink></li>
 
-        { isCustomer && <li><NavLink to={"/profile"} activeClassName="active">Profile</NavLink></li>}
-        { isAdmin && <li><NavLink to={"/admin"} activeClassName="active">Admin</NavLink></li>}
+        {isCustomer && <li><NavLink to={"/profile"} activeClassName="active">Profile</NavLink></li>}
+        {isAdmin && <li><NavLink to={"/admin"} activeClassName="active">Admin</NavLink></li>}
 
-        { !isAuthinticated && <li><NavLink to={"/login"} activeClassName="active">Login</NavLink></li>}
-        { !isAuthinticated && <li><NavLink to={"/register"} activeClassName="active">Register</NavLink></li>}
+        {!isAuthinticated && <li><NavLink to={"/login"} activeClassName="active">Login</NavLink></li>}
+        {!isAuthinticated && <li><NavLink to={"/register"} activeClassName="active">Register</NavLink></li>}
 
-        { isAuthinticated && <li>onClick={handleLogout}Logout</li>}
+        {isAuthinticated && <li onClick={handleLogout}>Logout</li>}
+
       </ul>
     </nav>
   )
